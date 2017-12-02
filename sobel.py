@@ -22,10 +22,8 @@ class Sobel:
                 window = self.img[(row - 1): (row + 2), (col - 1): (col + 2)]
                 value = window*kernel
                             #limit pixel value
-                if limit == "yes":
-                    img_filter[row, col] = int(value.sum())
-                else:
-                    img_filter[row, col] = int(value.sum()/9)
+
+                img_filter[row, col] = int(value.sum())
 
         return img_filter
 
@@ -37,16 +35,16 @@ class Sobel:
         #self.img = self.kernel_filter(filterG, 'yes')
         #self.sobelX = self.kernel_filter(filterX)
         #self.sobelY = self.kernel_filter(filterY)
-        self.img = cv2.blur(img, (3,3))
+        self.img = cv2.GaussianBlur(img, (3,3), 0)
         self.sobelX = self.kernel_filter(filterX)
         self.sobelY = self.kernel_filter(filterY)
 
         sb = (self.sobelX**2 + self.sobelY**2)**0.5
-        self.sb = sb
+        self.sb = cv2.medianBlur(sb,3)
 
     def threshold(self):
         a = np.copy(self.sb)
-        th = 10
+        th = 100
         a[a >= th] = 0
         a[a != 0] = 255
         self.sb = a
@@ -58,7 +56,7 @@ class Sobel:
 
 
 img = cv2.imread('sample.jpg', 0)
-
+img = cv2.resize(img, (150,200))
 sb = Sobel(img)
 
 img = sb.sobel()
