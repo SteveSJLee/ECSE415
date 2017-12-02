@@ -23,9 +23,9 @@ class Sobel:
                 value = window*kernel
                             #limit pixel value
                 if limit == "yes":
-                    img_filter[row, col] = int(value.sum()/9)
-                else:
                     img_filter[row, col] = int(value.sum())
+                else:
+                    img_filter[row, col] = int(value.sum()/9)
 
         return img_filter
 
@@ -34,33 +34,34 @@ class Sobel:
         filterY = np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]])
         filterG = np.array([(1, 2, 1), (2, 4, 2), (1, 2, 1)], np.float32)/16
 
-        self.img = self.kernel_filter(filterG, 'yes')
+        #self.img = self.kernel_filter(filterG, 'yes')
+        #self.sobelX = self.kernel_filter(filterX)
+        #self.sobelY = self.kernel_filter(filterY)
+        self.img = cv2.blur(img, (3,3))
         self.sobelX = self.kernel_filter(filterX)
         self.sobelY = self.kernel_filter(filterY)
 
-        sb = (self.sobelX**2 + self.sobelY**2)**0.5 
+        sb = (self.sobelX**2 + self.sobelY**2)**0.5
         self.sb = sb
+
+    def threshold(self):
+        a = np.copy(self.sb)
+        th = 10
+        a[a >= th] = 0
+        a[a != 0] = 255
+        self.sb = a
 
     def sobel(self):
         self.filter()
+        self.threshold()
         return self.sb
+
 
 img = cv2.imread('sample.jpg', 0)
 
 sb = Sobel(img)
 
 img = sb.sobel()
-x = sb.sobelX
-y = sb.sobelY
-
-
-cv2.imshow('img',x)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-
-cv2.imshow('img',y)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
 
 cv2.imshow('img',img)
 cv2.waitKey(0)
