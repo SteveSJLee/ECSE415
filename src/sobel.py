@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-class Sobel:
+class SB:
     def __init__(self, img):
         self.img = img
         self.sobelX = None
@@ -54,7 +54,7 @@ class Sobel:
 # example
 img = cv2.imread('sample2.jpg', 0)
 img = cv2.resize(img, (150,200))
-sb = Sobel(img)
+sb = SB(img)
 
 img = sb.sobel()
 
