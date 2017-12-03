@@ -9,21 +9,22 @@ class Sobel:
         self.sb = None
 
     # use kernel to filter the input image
-    def kernel_filter (self, kernel, limit='no'):
+    def kernel_filter (self, kernel):
         height, width = self.img.shape
         kernel_height, kernel_width = kernel.shape
 
-        img_filter = np.zeros(((height+2), (width+2)), np.float32)
+        img_pad = np.zeros(((height+2), (width+2)), np.float32)
+        img_pad[1:height+1, 1:width+1] = self.img
+
         window = np.zeros((kernel_height, kernel_width), np.float32)
         value = np.zeros((kernel_height, kernel_width), np.float32)
 
-        for row in range(1, height-1):
-            for col in range(1, width-1):
-                window = self.img[(row - 1): (row + 2), (col - 1): (col + 2)]
+        img_filter = np.zeros((height, width))
+        for row in range(1, height):
+            for col in range(1, width):
+                window = img_pad[(row - 1): (row + 2), (col - 1): (col + 2)]
                 value = window*kernel
-                            #limit pixel value
-
-                img_filter[row, col] = int(value.sum())
+                img_filter[row-1, col-1] = int(value.sum())
 
         return img_filter
 
@@ -32,15 +33,11 @@ class Sobel:
         filterY = np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]])
         filterG = np.array([(1, 2, 1), (2, 4, 2), (1, 2, 1)], np.float32)/16
 
-        #self.img = self.kernel_filter(filterG, 'yes')
-        #self.sobelX = self.kernel_filter(filterX)
-        #self.sobelY = self.kernel_filter(filterY)
-        self.img = cv2.GaussianBlur(img, (3,3), 0)
         self.sobelX = self.kernel_filter(filterX)
         self.sobelY = self.kernel_filter(filterY)
 
         sb = (self.sobelX**2 + self.sobelY**2)**0.5
-        self.sb = cv2.medianBlur(sb,3)
+        self.sb = cv2.GaussianBlur(sb, (3,3), 0)
 
     def threshold(self):
         a = np.copy(self.sb)
@@ -55,7 +52,7 @@ class Sobel:
         return self.sb
 
 
-img = cv2.imread('sample.jpg', 0)
+img = cv2.imread('sample2.jpg', 0)
 img = cv2.resize(img, (150,200))
 sb = Sobel(img)
 
