@@ -36,15 +36,17 @@ class SB:
         self.sobelX = self.kernel_filter(filterX)
         self.sobelY = self.kernel_filter(filterY)
 
-        sb = (self.sobelX**2 + self.sobelY**2)**0.5
-        self.sb = cv2.GaussianBlur(sb, (3,3), 0)
+        sb = cv2.magnitude(self.sobelX, self.sobelY)
+        #(self.sobelX**2 + self.sobelY**2)**0.5
+        self.sb = cv2.GaussianBlur(sb, (5,5), 0)
 
     def threshold(self):
-        a = np.copy(self.sb)
         th = 100
-        a[a >= th] = 0
-        a[a != 0] = 255
-        self.sb = a
+        img_thr = np.copy(self.sb)
+        img_thr[img_thr >= th] = 0
+        img_thr[img_thr != 0] = 255
+
+        self.sb = img_thr
 
     def sobel(self):
         self.filter()
@@ -52,7 +54,7 @@ class SB:
         return self.sb
 
 # example
-img = cv2.imread('sample2.jpg', 0)
+img = cv2.imread('sample.jpg', 0)
 img = cv2.resize(img, (150,200))
 sb = SB(img)
 
