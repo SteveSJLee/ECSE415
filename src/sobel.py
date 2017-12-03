@@ -18,8 +18,8 @@ class Sobel:
 
         window = np.zeros((kernel_height, kernel_width), np.float32)
         value = np.zeros((kernel_height, kernel_width), np.float32)
-
         img_filter = np.zeros((height, width))
+
         for row in range(1, height):
             for col in range(1, width):
                 window = img_pad[(row - 1): (row + 2), (col - 1): (col + 2)]
@@ -51,7 +51,7 @@ class Sobel:
         self.threshold()
         return self.sb
 
-
+# example
 img = cv2.imread('sample2.jpg', 0)
 img = cv2.resize(img, (150,200))
 sb = Sobel(img)
