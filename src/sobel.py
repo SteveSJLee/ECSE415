@@ -2,8 +2,8 @@ import cv2
 import numpy as np
 
 class SB:
-    def __init__(self, img):
-        self.img = img
+    def __init__(self):
+        #self.img = img
         self.sobelX = None
         self.sobelY = None
         self.sb = None
@@ -48,7 +48,8 @@ class SB:
 
         self.sb = img_thr
 
-    def sobel(self):
+    def sobel(self, img):
+        self.img = img
         self.filter()
         self.threshold()
         return self.sb
@@ -56,9 +57,9 @@ class SB:
 # example
 img = cv2.imread('sample.jpg', 0)
 img = cv2.resize(img, (150,200))
-sb = SB(img)
+sb = SB()
 
-img = sb.sobel()
+img = sb.sobel(img)
 
 cv2.imshow('img',img)
 cv2.waitKey(0)
