@@ -40,18 +40,17 @@ class SB:
         #(self.sobelX**2 + self.sobelY**2)**0.5
         self.sb = cv2.GaussianBlur(sb, (5,5), 0)
 
-    def threshold(self):
-        th = 100
+    def threshold(self, th):
         img_thr = np.copy(self.sb)
         img_thr[img_thr >= th] = 0
         img_thr[img_thr != 0] = 255
 
         self.sb = img_thr
 
-    def sobel(self, img):
+    def sobel(self, img, th=100):
         self.img = img
         self.filter()
-        self.threshold()
+        self.threshold(th)
         return self.sb
 
 # example
