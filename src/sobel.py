@@ -38,12 +38,12 @@ class SB:
 
         sb = cv2.magnitude(self.sobelX, self.sobelY)
         #(self.sobelX**2 + self.sobelY**2)**0.5
-        self.sb = cv2.GaussianBlur(sb, (5,5), 0)
+        self.sb = sb#cv2.GaussianBlur(sb, (5,5), 0)
 
     def threshold(self, th):
         img_thr = np.copy(self.sb)
-        img_thr[img_thr >= th] = 0
-        img_thr[img_thr != 0] = 255
+        img_thr[img_thr >= th] = 255
+        img_thr[img_thr != 255] = 0
 
         self.sb = img_thr
 
@@ -53,11 +53,34 @@ class SB:
         self.threshold(th)
         return self.sb
 
-# example
-img = cv2.imread('sample.jpg', 0)
-img = cv2.resize(img, (150,200))
-sb = SB()
 
+
+
+def apply_sobel(img, ksize, thres=None):
+    """
+    Apply Sobel operator [ksizexksize] to image.
+    @param  img:    input image
+    @param  ksize:  Sobel kernel size
+                    @pre odd integer >= 3
+    @param  thres:  binary threshold, if None do not threshold
+                    @pre integer >= 0 & <= 255
+    
+    @return:    image of Sobel magnitude
+    """
+    Ix = cv2.Sobel(img, cv2.CV_64F, 1, 0, ksize=ksize)
+    Iy = cv2.Sobel(img, cv2.CV_64F, 0, 1, ksize=ksize)
+    Im = cv2.magnitude(Ix, Iy)
+    if thres is not None:
+        _, It = cv2.threshold(Im, thres, 1, cv2.THRESH_BINARY)
+        return It
+    else:
+        return Im
+
+
+# example
+img = cv2.imread('eyes_search.png', 0)
+#img = cv2.resize(img, (150,200))
+sb = SB()
 img = sb.sobel(img)
 
 cv2.imshow('img',img)
